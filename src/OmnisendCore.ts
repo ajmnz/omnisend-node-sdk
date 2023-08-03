@@ -1,11 +1,11 @@
 import { HttpClient } from "./http-client";
 import type { OmnisendOptions } from "./types";
 
-export class OmnisendCore {
+export class OmnisendCore<S extends true | false> {
   /**
    * The http client instance
    */
-  protected httpClient: HttpClient;
+  protected httpClient: HttpClient<unknown, S>;
 
   /**
    * The Omnisend API Key
@@ -17,7 +17,7 @@ export class OmnisendCore {
    */
   private debug: boolean;
 
-  constructor(options: OmnisendOptions) {
+  constructor(options: OmnisendOptions<S>) {
     this.apiKey = options.apiKey;
     this.debug = options.debug === true;
 
@@ -25,7 +25,8 @@ export class OmnisendCore {
 
     // Set up httpclient
 
-    this.httpClient = new HttpClient({
+    this.httpClient = new HttpClient<unknown, S>({
+      safeMode: options.safeMode,
       headers: {
         "X-API-KEY": this.apiKey,
         "User-Agent": "ajmnz/omnisend-node-sdk",

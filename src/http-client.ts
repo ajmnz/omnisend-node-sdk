@@ -6,7 +6,7 @@ import type {
   HeadersDefaults,
   ResponseType,
 } from "axios";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import FormData from "form-data";
 
 export type QueryParamsType = Record<string | number, any>;
@@ -29,13 +29,16 @@ export interface FullRequestParams
 
 export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
 
-export interface ApiConfig<SecurityDataType = unknown>
-  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+export interface ApiConfig<
+  SecurityDataType = unknown,
+  SafeMode extends true | false = false,
+> extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
   securityWorker?: (
     securityData: SecurityDataType | null
   ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
   secure?: boolean;
   format?: ResponseType;
+  safeMode?: SafeMode;
 }
 
 export enum ContentType {
@@ -45,19 +48,25 @@ export enum ContentType {
   Text = "text/plain",
 }
 
-export class HttpClient<SecurityDataType = unknown> {
+type WithSafeMode<S, T> = S extends true
+  ? { success: true; data: T } | { success: false; error?: string }
+  : T;
+
+export class HttpClient<SecurityDataType = unknown, SafeMode extends true | false = any> {
   public instance: AxiosInstance;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private secure?: boolean;
   private format?: ResponseType;
+  private safeMode?: SafeMode;
 
   constructor({
     securityWorker,
     secure,
     format,
+    safeMode,
     ...axiosConfig
-  }: ApiConfig<SecurityDataType> = {}) {
+  }: ApiConfig<SecurityDataType, SafeMode> = {}) {
     this.instance = axios.create({
       ...axiosConfig,
       baseURL: axiosConfig.baseURL || "https://api.omnisend.com/v3",
@@ -65,6 +74,7 @@ export class HttpClient<SecurityDataType = unknown> {
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
+    this.safeMode = safeMode;
   }
 
   public setSecurityData = (data: SecurityDataType | null) => {
@@ -122,7 +132,7 @@ export class HttpClient<SecurityDataType = unknown> {
     format,
     body,
     ...params
-  }: FullRequestParams): Promise<T> => {
+  }: FullRequestParams): Promise<WithSafeMode<SafeMode, T>> => {
     const secureParams =
       ((typeof secure === "boolean" ? secure : this.secure) &&
         this.securityWorker &&
@@ -144,8 +154,8 @@ export class HttpClient<SecurityDataType = unknown> {
       body = JSON.stringify(body);
     }
 
-    return this.instance
-      .request({
+    try {
+      const res = await this.instance.request<T>({
         ...requestParams,
         headers: {
           ...(requestParams.headers || {}),
@@ -155,7 +165,26 @@ export class HttpClient<SecurityDataType = unknown> {
         responseType: responseFormat,
         data: body,
         url: path,
-      })
-      .then((response) => response.data);
+      });
+
+      if (this.safeMode) {
+        return { success: true, data: res.data } as WithSafeMode<SafeMode, T>;
+      }
+
+      return res.data as WithSafeMode<SafeMode, T>;
+    } catch (error) {
+      if (this.safeMode) {
+        if (isAxiosError(error)) {
+          const apiErr = error.response?.data?.error;
+          if (apiErr && typeof apiErr === "string") {
+            return { success: false, error: apiErr } as WithSafeMode<SafeMode, T>;
+          }
+
+          return { success: false, error: undefined } as WithSafeMode<SafeMode, T>;
+        }
+      }
+
+      throw error;
+    }
   };
 }

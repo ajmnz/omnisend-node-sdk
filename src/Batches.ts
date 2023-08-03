@@ -2,10 +2,10 @@ import type { PagingLink } from "./data-contracts";
 import type { HttpClient, RequestParams } from "./http-client";
 import { ContentType } from "./http-client";
 
-export class Batches<SecurityDataType = unknown> {
-  http: HttpClient<SecurityDataType>;
+export class Batches<SecurityDataType = unknown, SafeMode extends true | false = false> {
+  http: HttpClient<SecurityDataType, SafeMode>;
 
-  constructor(http: HttpClient<SecurityDataType>) {
+  constructor(http: HttpClient<SecurityDataType, SafeMode>) {
     this.http = http;
   }
 

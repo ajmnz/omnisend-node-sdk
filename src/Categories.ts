@@ -2,10 +2,13 @@ import type { CategoryOutput, CategoryPartial, PagingLink } from "./data-contrac
 import type { HttpClient, RequestParams } from "./http-client";
 import { ContentType } from "./http-client";
 
-export class Categories<SecurityDataType = unknown> {
-  http: HttpClient<SecurityDataType>;
+export class Categories<
+  SecurityDataType = unknown,
+  SafeMode extends true | false = false,
+> {
+  http: HttpClient<SecurityDataType, SafeMode>;
 
-  constructor(http: HttpClient<SecurityDataType>) {
+  constructor(http: HttpClient<SecurityDataType, SafeMode>) {
     this.http = http;
   }
 

@@ -120,7 +120,16 @@ const eslint = new ESLint({ useEslintrc: true, fix: true });
     }
 
     for (const typesFile of typesFiles) {
-      const content = typesFile.fileContent;
+      const content = typesFile.fileContent
+        .replace(
+          "SecurityDataType = unknown",
+          "SecurityDataType = unknown, SafeMode extends true | false = false"
+        )
+        .replace(
+          /HttpClient<SecurityDataType>/g,
+          "HttpClient<SecurityDataType, SafeMode>"
+        );
+
       typesFile.fileName += typesFile.fileExtension;
       fs.writeFileSync(
         path.join(srcPath, typesFile.fileName),
@@ -148,7 +157,9 @@ const eslint = new ESLint({ useEslintrc: true, fix: true });
         classInstance = classInstance.split(": ")[1];
       }
 
-      declarations.push(`public ${modelName.replace(/-/g, "")}: ${classDeclaration};`);
+      declarations.push(
+        `public ${modelName.replace(/-/g, "")}: ${classDeclaration}<unknown, S>;`
+      );
       instances.push(`this.${modelName.replace(/-/g, "")} = ${classInstance};`);
     } else {
       let declarationObj = `public ${modelName}: { `;

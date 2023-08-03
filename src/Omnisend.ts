@@ -13,19 +13,19 @@ import { Orders } from "./Orders";
 import { Products } from "./Products";
 // End model imports
 
-export class Omnisend extends OmnisendCore {
+export class Omnisend<S extends true | false = false> extends OmnisendCore<S> {
   // Model declarations
-  public batches: Batches;
-  public campaigns: Campaigns;
-  public carts: Carts;
-  public categories: Categories;
-  public contacts: Contacts;
-  public events: Events;
-  public orders: Orders;
-  public products: Products;
+  public batches: Batches<unknown, S>;
+  public campaigns: Campaigns<unknown, S>;
+  public carts: Carts<unknown, S>;
+  public categories: Categories<unknown, S>;
+  public contacts: Contacts<unknown, S>;
+  public events: Events<unknown, S>;
+  public orders: Orders<unknown, S>;
+  public products: Products<unknown, S>;
   // End model declarations
 
-  constructor(options: OmnisendOptions) {
+  constructor(options: OmnisendOptions<S>) {
     super(options);
 
     // Model instances

@@ -25,10 +25,11 @@ Make sure to familiarize yourself with the [Omnisend API Docs](https://api-docs.
 
 #### Client options
 
-| option   | description                                                                                                     | required | default |
-| -------- | --------------------------------------------------------------------------------------------------------------- | -------- | ------- |
-| `apiKey` | Your Omnisend API Key. Get it from [your account](https://app.omnisend.com/#/my-account/integrations/api-keys). | Yes      |         |
-| `debug`  | Enable debug logging. Useful to troubleshoot errors.                                                            | No       | `false` |
+| option     | description                                                                                                     | required | default |
+| ---------- | --------------------------------------------------------------------------------------------------------------- | -------- | ------- |
+| `apiKey`   | Your Omnisend API Key. Get it from [your account](https://app.omnisend.com/#/my-account/integrations/api-keys). | Yes      |         |
+| `debug`    | Enable debug logging. Useful to troubleshoot errors.                                                            | No       | `false` |
+| `safeMode` | Enable safe mode. (see [Using Safe Mode](#using-safe-mode))                                                     | No       | `false` |
 
 #### Calling the API
 
@@ -50,6 +51,28 @@ Now all APIs/endpoints are available as properties from the instance you just cr
 
 ```ts
 const contacts = await omnisend.contacts.listContacts();
+```
+
+#### Using Safe Mode
+
+In safe mode, requests will never throw an error and instead the result will be a discriminated union consisting of an object containing either the successfully received data or the error response.
+
+This is fully typesafe and dependant on the value of the `safeMode` option. When set to `true`, the omnisend instance will become `Omnisend<true>` and all types are automatically switched to discriminated unions.
+
+```ts
+const omnisend = new Omnisend({
+  apiKey: "your-api-key",
+  safeMode: true,
+});
+
+const contacts = await omnisend.contacts.listContacts();
+if (contacts.success) {
+  // Access your contacts data
+  contacts.data;
+} else {
+  // Handle error
+  contacts.error;
+}
 ```
 
 #### Accessing types for each endpoint
