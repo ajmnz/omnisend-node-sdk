@@ -7,6 +7,12 @@
   "license": "MIT",
   "packageManager": "yarn@3.6.1",
   "description": "🔹 Typesafe Omnisend API SDK for Node.js",
+  "keywords": [
+    "omnisend",
+    "omnisend node",
+    "omnisend sdk",
+    "omnisend api"
+  ],
   "devDependencies": {
     "@types/node": "20.4.6",
     "@typescript-eslint/eslint-plugin": "6.2.1",

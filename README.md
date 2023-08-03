@@ -54,9 +54,8 @@ const contacts = await omnisend.contacts.listContacts();
 
 #### Accessing types for each endpoint
 
-If you any of the types of a specific endpoint, you can import them through their dedicated path at `omnisend-node-sdk/<endpoint>`.
+If you any of the types of a specific endpoint, you can import them from `omnisend-node-sdk/data-contracts`.
 
 ```ts
-import type { Marketplace } from "sp-api-node/sellers";
-import type { Order, OrderItem } from "sp-api-node/orders/v0";
+import type { ContactsOutput } from "omnisend-node-sdk/data-contracts";
 ```
