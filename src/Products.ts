@@ -1,6 +1,6 @@
 import type { PagingLink } from "./data-contracts";
-import type { HttpClient, RequestParams } from "../http-client";
-import { ContentType } from "../http-client";
+import type { HttpClient, RequestParams } from "./http-client";
+import { ContentType } from "./http-client";
 
 export class Products<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;

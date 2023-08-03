@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable no-param-reassign */
-
+/* eslint-disable @typescript-eslint/no-shadow */
 import type {
   AxiosInstance,
   AxiosRequestConfig,

@@ -8,12 +8,6 @@ const { generateApi } = require("swagger-typescript-api");
 
 const prettierConfig = require("../.prettierrc.js");
 
-function capitalize(str, lower = false) {
-  return (lower ? str.toLowerCase() : str).replace(/(?:^|\s|["'([{])+\S/g, (match) =>
-    match.toUpperCase()
-  );
-}
-
 async function prettierFormat(content) {
   return await prettier.format(content, {
     ...prettierConfig,
@@ -32,6 +26,7 @@ const eslint = new ESLint({ useEslintrc: true, fix: true });
       (p) =>
         ![
           "http-client.ts",
+          "data-contracts.ts",
           "index.ts",
           "Omnisend.ts",
           "OmnisendCore.ts",
@@ -65,10 +60,7 @@ const eslint = new ESLint({ useEslintrc: true, fix: true });
       version = version.toLowerCase();
     }
 
-    models[cleanFilename] = {
-      ...models[cleanFilename],
-      [version]: path.join(modelsPath, modelFilename),
-    };
+    models[cleanFilename] = path.join(modelsPath, modelFilename);
   }
 
   const imports = [];
@@ -76,100 +68,75 @@ const eslint = new ESLint({ useEslintrc: true, fix: true });
   const instances = [];
 
   for (const modelName of Object.keys(models)) {
-    const versions = models[modelName];
-    const versionNames = Object.keys(versions);
-    const baseDir = path.join(srcPath, modelName);
+    const modelPath = models[modelName];
     const declaration = [];
     const instance = [];
 
-    for (const version of versionNames) {
-      let outputPath = path.join(baseDir, version);
-      if (version === "null") {
-        outputPath = baseDir;
-      }
+    fs.renameSync(
+      path.join(srcPath, "http-client.ts"),
+      path.join(srcPath, "_http-client.ts")
+    );
+    fs.renameSync(
+      path.join(srcPath, "data-contracts.ts"),
+      path.join(srcPath, "_data-contracts.ts")
+    );
 
-      const model = JSON.parse(fs.readFileSync(versions[version], "utf-8"));
-      const result = await generateApi({
-        output: outputPath,
-        spec: model,
-        httpClientType: "axios",
-        templates: path.join(srcPath, "templates", "modular"),
-        modular: true,
-        singleHttpClient: true,
-        unwrapResponseData: true,
-        silent: true,
-      });
+    const model = JSON.parse(fs.readFileSync(modelPath, "utf-8"));
+    const result = await generateApi({
+      output: srcPath,
+      spec: model,
+      httpClientType: "axios",
+      templates: path.join(srcPath, "templates", "modular"),
+      modular: true,
+      singleHttpClient: true,
+      unwrapResponseData: true,
+      silent: true,
+    });
 
-      fs.rmSync(path.join(outputPath, "http-client.ts"), {
-        recursive: true,
-        force: true,
-      });
+    fs.rmSync(path.join(srcPath, "http-client.ts"), {
+      recursive: true,
+      force: true,
+    });
+    fs.rmSync(path.join(srcPath, "data-contracts.ts"), {
+      recursive: true,
+      force: true,
+    });
 
-      const typesFiles = result.files.filter(
-        ({ fileName }) => !["data-contracts", "http-client"].includes(fileName)
+    fs.renameSync(
+      path.join(srcPath, "_http-client.ts"),
+      path.join(srcPath, "http-client.ts")
+    );
+    fs.renameSync(
+      path.join(srcPath, "_data-contracts.ts"),
+      path.join(srcPath, "data-contracts.ts")
+    );
+
+    const typesFiles = result.files.filter(
+      ({ fileName }) => !["data-contracts", "http-client"].includes(fileName)
+    );
+
+    if (!typesFiles.length) {
+      throw new Error("Missing types file");
+    }
+
+    for (const typesFile of typesFiles) {
+      const content = typesFile.fileContent;
+      typesFile.fileName += typesFile.fileExtension;
+      fs.writeFileSync(
+        path.join(srcPath, typesFile.fileName),
+        await prettierFormat(content)
       );
 
-      if (!typesFiles.length) {
-        throw new Error("Missing types file");
-      }
+      const lintResult = await eslint.lintFiles(path.join(srcPath, typesFile.fileName));
+      await ESLint.outputFixes(lintResult);
 
-      let i = 0;
-      const indexContent = [];
+      const objectName = typesFile.fileName.replace(".ts", "");
+      const importedClass = `${objectName}`.replace(/-/g, "");
 
-      for (const typesFile of typesFiles) {
-        const isFirst = i === 0;
-        const content = typesFile.fileContent.replace(
-          /(?<=import .* from ")(\.\/http-client)(?=";)/,
-          version === "null" ? "../http-client" : "../../http-client"
-        );
-        typesFile.fileName += typesFile.fileExtension;
-        fs.writeFileSync(
-          path.join(outputPath, typesFile.fileName),
-          await prettierFormat(content)
-        );
+      imports.push(`import { ${objectName} } from "./${objectName}";`);
 
-        const lintResult = await eslint.lintFiles(
-          path.join(outputPath, typesFile.fileName)
-        );
-        await ESLint.outputFixes(lintResult);
-
-        // Add index with exports
-
-        if (isFirst) {
-          indexContent.push('export * from "./data-contracts";');
-        }
-
-        const objectName = typesFile.fileName.replace(".ts", "");
-        const importedClass = `${modelName}${
-          version === "null" ? "" : version.toUpperCase()
-        }${objectName}`.replace(/-/g, "");
-
-        imports.push(
-          `import { ${typesFile.fileName.replace(
-            ".ts",
-            ""
-          )} as ${importedClass} } from "./${modelName}${
-            version === "null" ? "" : `/${version}`
-          }/${objectName}";`
-        );
-
-        if (version === "null") {
-          declaration.push(`${importedClass}`);
-          instance.push(`new ${importedClass}(this.httpClient)`);
-        } else if (typesFiles.length === 1) {
-          declaration.push(`${version}: ${importedClass}`);
-          instance.push(`${version}: new ${importedClass}(this.httpClient)`);
-        } else {
-          declaration.push(`${version}${capitalize(objectName)}: ${importedClass}`);
-          instance.push(
-            `${version}${capitalize(objectName)}: new ${importedClass}(this.httpClient)`
-          );
-        }
-
-        i++;
-      }
-
-      fs.writeFileSync(path.join(outputPath, "index.ts"), indexContent.join("\n") + "\n");
+      declaration.push(`${importedClass}`);
+      instance.push(`new ${importedClass}(this.httpClient)`);
     }
 
     if (declaration.length === 1) {

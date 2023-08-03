@@ -1,7 +1,8 @@
-import type { HttpClient, RequestParams } from "../http-client";
-import { ContentType } from "../http-client";
+import type { ContactsInput, ContactsOutput, PagingCursor } from "./data-contracts";
+import type { HttpClient, RequestParams } from "./http-client";
+import { ContentType } from "./http-client";
 
-export class Events<SecurityDataType = unknown> {
+export class Contacts<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -9,33 +10,72 @@ export class Events<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Get custom event, created in Omnisend app.
+   * @description `contactID` - contact's ID in our system
    *
-   * @tags Events
-   * @name GetEventsEventId
-   * @summary Get custom event
-   * @request GET:/events/{eventID}
+   * @tags Contacts
+   * @name GetContacts
+   * @summary Get contact's info
+   * @request GET:/contacts/{contactID}
    * @secure
    */
-  getEventsEventId = (eventId: string, params: RequestParams = {}) =>
+  getContacts = (contactId: string, params: RequestParams = {}) =>
+    this.http.request<
+      ContactsOutput,
+      | {
+          /** @default "Bad Request - invalid parameters, fields or filters" */
+          error?: string;
+        }
+      | {
+          /** @default "Unauthorized - authorization error (invalid basic auth data or API key)" */
+          error?: string;
+        }
+      | {
+          /** @default "Forbidden – The server understood the request, but is refusing it (blocked due to many errors in particular time) or the access is not allowed." */
+          error?: string;
+        }
+      | {
+          /** @default " Not found – There is no resource behind the URI." */
+          error?: string;
+        }
+      | {
+          /** @default "Request timeout" */
+          error?: string;
+        }
+      | {
+          /** @default "Unprocessable Entity – used if the server cannot process the enitity, e.g. mandatory fields are missing in the payload." */
+          error?: string;
+        }
+      | {
+          /** @default " to many requests (rate limit) - current " */
+          error?: string;
+        }
+    >({
+      path: `/contacts/${contactId}`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Update existing contact. Pass only fields you want to update. `contactID` - contact's ID in our system You can update contact: * by `contactID` in endpoint path. Example: `PATCH` [https://api.omnisend.com/v3/contacts/696969](https://api.omnisend.com/v3/contacts/696969) **Note:** - You can update any field, except `email` (`identifiers.id` value for type `email`). - `Phone` (`identifiers.id` value for type `phone`) will be added/updated **only** if it isn't assigned to another contact.
+   *
+   * @tags Contacts
+   * @name PatchContactsContactId
+   * @summary Update contact
+   * @request PATCH:/contacts/{contactID}
+   * @secure
+   */
+  patchContactsContactId = (
+    contactId: string,
+    data: object & ContactsInput,
+    params: RequestParams = {}
+  ) =>
     this.http.request<
       {
-        eventID?: string;
-        name?: string;
-        systemName?: string;
-        enabled?: boolean;
-        /** @format date-time */
-        createdAt?: string;
-        /** @format date-time */
-        updatedAt?: string;
-        /** @format date-time */
-        launchedAt?: string;
-        fields?: {
-          name?: string;
-          systemName?: string;
-          type?: string;
-          required?: boolean;
-        }[];
+        /** @format email */
+        email?: string;
+        contactID: string;
+        phone?: string;
       },
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
@@ -66,105 +106,51 @@ export class Events<SecurityDataType = unknown> {
           error?: string;
         }
     >({
-      path: `/events/${eventId}`,
-      method: "GET",
+      path: `/contacts/${contactId}`,
+      method: "PATCH",
+      body: data,
       secure: true,
+      type: ContentType.Json,
       format: "json",
       ...params,
     });
   /**
-   * @description Trigger custom event to Omnisend. To make your custom automation flow to work you need: 1. Create a custom event in the [Omnisend application](https://app.omnisend.com) while adding custom `fields`. 2. Create flow(s) with that custom event. 3. Pass all required fields (`eventID`, `email`, `phone`), including the required custom `fields`, that you created in Step 2.
+   * No description
    *
-   * @tags Events
-   * @name PostEventsEventId
-   * @summary Trigger custom event
-   * @request POST:/events/{eventID}
+   * @tags Contacts
+   * @name ListContacts
+   * @summary List contacts
+   * @request GET:/contacts
    * @secure
    */
-  postEventsEventId = (
-    eventId: string,
-    data: {
+  listContacts = (
+    query?: {
       /**
-       * Email or phone number is required
+       * Full email address.
        * @format email
        */
       email?: string;
-      /** Email or phone number is required */
+      /** Email channel status. See endpoint description for available statuses. */
+      status?: "subscribed" | "unsubscribed" | "nonSubscribed";
+      /** Segment ID. */
+      segmentID?: string;
+      tag?: string;
+      /**
+       * Number of results to fetch. Default is 100, max 250.
+       * @min 1
+       * @max 250
+       * @default 100
+       */
+      limit?: number;
       phone?: string;
-      /** customFields - pass only fields defined in Omnisend app. You can check defined fields, their types and requisiteness by using GET /events endpoint. */
-      fields?: {
-        key?: string;
-      };
     },
     params: RequestParams = {}
   ) =>
-    this.http.request<
-      void,
-      | {
-          /** @default "Bad Request - invalid parameters, fields or filters" */
-          error?: string;
-        }
-      | {
-          /** @default "Unauthorized - authorization error (invalid basic auth data or API key)" */
-          error?: string;
-        }
-      | {
-          /** @default "Forbidden – The server understood the request, but is refusing it (blocked due to many errors in particular time) or the access is not allowed." */
-          error?: string;
-        }
-      | {
-          /** @default " Not found – There is no resource behind the URI." */
-          error?: string;
-        }
-      | {
-          /** @default "Request timeout" */
-          error?: string;
-        }
-      | {
-          /** @default "Unprocessable Entity – used if the server cannot process the enitity, e.g. mandatory fields are missing in the payload." */
-          error?: string;
-        }
-      | {
-          /** @default " to many requests (rate limit) - current " */
-          error?: string;
-        }
-    >({
-      path: `/events/${eventId}`,
-      method: "POST",
-      body: data,
-      secure: true,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * @description Get custom events, created in Omnisend app.
-   *
-   * @tags Events
-   * @name GetEvents
-   * @summary List custom events
-   * @request GET:/events
-   * @secure
-   */
-  getEvents = (params: RequestParams = {}) =>
     this.http.request<
       {
-        eventID?: string;
-        name?: string;
-        systemName?: string;
-        enabled?: boolean;
-        /** @format date-time */
-        createdAt?: string;
-        /** @format date-time */
-        updatedAt?: string;
-        /** @format date-time */
-        launchedAt?: string;
-        fields?: {
-          name?: string;
-          systemName?: string;
-          type?: string;
-          required?: boolean;
-        }[];
-      }[],
+        contacts?: ContactsOutput[];
+        paging?: PagingCursor;
+      },
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
           error?: string;
@@ -194,43 +180,35 @@ export class Events<SecurityDataType = unknown> {
           error?: string;
         }
     >({
-      path: `/events`,
+      path: `/contacts`,
       method: "GET",
+      query,
       secure: true,
       format: "json",
       ...params,
     });
   /**
-   * @description Trigger (by event’s system name) or create event. If custom event doesn’t exist - it will be created with passed event’s fields. Custom event field types will be determined automatically*. If existing custom event will be triggered with additional fields - they will be added to custom event fields. If triggered existing custom event's field types will differ from existing ones, you’ll get an error. **Note:** numbers like 10, 10.00, 10.0 will be interpreted as **integers**. If you want custom event field to be interpreted as **float**, pass **10.01** or etc (number not with leading zeros).
+   * @description Create new contact.
    *
-   * @tags Events
-   * @name PostEvents
-   * @summary Trigger or create custom event
-   * @request POST:/events
+   * @tags Contacts
+   * @name PostContacts
+   * @summary Create contact
+   * @request POST:/contacts
    * @secure
    */
-  postEvents = (
+  postContacts = (
     data: {
-      /** Event name */
-      name?: string;
-      /** Event system name */
-      systemName: string;
-      /**
-       * Email or phone number is required
-       * @format email
-       */
-      email?: string;
-      /** Email or phone number is required */
-      phone?: string;
-      /** Event custom fields */
-      fields?: {
-        fieldSystemName?: string;
-      };
-    },
+      /** Send welcome email (will be sent only if welcome workflow is turned on) or not. */
+      sendWelcomeEmail?: boolean;
+    } & ContactsInput,
     params: RequestParams = {}
   ) =>
     this.http.request<
-      void,
+      {
+        /** @format email */
+        email?: string;
+        contactID: string;
+      },
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
           error?: string;
@@ -260,11 +238,12 @@ export class Events<SecurityDataType = unknown> {
           error?: string;
         }
     >({
-      path: `/events`,
+      path: `/contacts`,
       method: "POST",
       body: data,
       secure: true,
       type: ContentType.Json,
+      format: "json",
       ...params,
     });
 }
