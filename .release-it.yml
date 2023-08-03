@@ -14,7 +14,7 @@ npm:
 
 hooks:
   before:init:
-    - sh scripts/generate-client.sh
+    - node scripts/generate-client.js
     - yarn lint
     - yarn format
   after:bump:
