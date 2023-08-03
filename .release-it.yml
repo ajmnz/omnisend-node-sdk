@@ -1,0 +1,22 @@
+git:
+  push: true
+  requireBranch: main
+  commit: true
+  commitMessage: release ${version}
+  commitArgs: ["--no-verify"]
+
+github:
+  release: true
+
+npm:
+  publish: true
+  publishPath: "./dist/"
+
+hooks:
+  before:init:
+    - sh scripts/generate-client.sh
+    - yarn lint
+    - yarn format
+  after:bump:
+    - yarn clean
+    - yarn build

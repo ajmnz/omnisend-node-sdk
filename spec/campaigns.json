@@ -1,0 +1,2060 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "",
+    "title": "Omnisend API (Campaigns)",
+    "description": ""
+  },
+  "paths": {
+    "/campaigns/{campaignID}": {
+      "parameters": [
+        {
+          "name": "campaignID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "GET_campaigns-campaignID",
+        "summary": "Get campaign's info",
+        "tags": ["Campaigns"],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/campaign-full"
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "campaignID": "59099010597ed74f6635fb14",
+                      "name": "Welcome campaign",
+                      "status": "sent",
+                      "type": "abTest",
+                      "fromName": "Evil store",
+                      "subject": "Hot discounts",
+                      "url": "https://example.omnisendlink.com/598746145214/0",
+                      "createdAt": "2017-06-30T10:11:47.020Z",
+                      "updatedAt": "2017-06-30T10:11:47.020Z",
+                      "startDate": "2017-05-30T10:15:26.093Z",
+                      "endDate": "2017-05-30T18:20:19.474Z",
+                      "sent": 99999,
+                      "opened": 9999,
+                      "clicked": 666,
+                      "bounced": 111,
+                      "complained": 0,
+                      "unsubscribed": 0,
+                      "allSubscribers": false,
+                      "segments": [{}],
+                      "abTestWinner": {
+                        "fromName": "Master",
+                        "subject": "Super hot",
+                        "startDate": "2017-05-30T10:15:26.093Z",
+                        "endDate": "2017-05-30T18:20:19.474Z",
+                        "sent": 69333,
+                        "clicked": 1233,
+                        "bounced": 151,
+                        "complained": 0,
+                        "opened": 18966,
+                        "unsubscribed": 0
+                      },
+                      "abTest": [
+                        {
+                          "winner": true,
+                          "fromName": "Master",
+                          "subject": "Super hot",
+                          "startDate": "2017-05-30T10:15:26.093Z",
+                          "endDate": "2017-05-30T18:20:19.474Z",
+                          "sent": 15333,
+                          "clicked": 633,
+                          "bounced": 11,
+                          "complained": 0,
+                          "opened": 5966,
+                          "unsubscribed": 0
+                        },
+                        {
+                          "winner": false,
+                          "fromName": "Good deals",
+                          "subject": "Discounts",
+                          "startDate": "2017-05-30T10:15:26.093Z",
+                          "endDate": "2017-05-30T10:30:19.474Z",
+                          "sent": 15333,
+                          "clicked": 125,
+                          "bounced": 20,
+                          "complained": 0,
+                          "opened": 3333,
+                          "unsubscribed": 0
+                        }
+                      ],
+                      "byDevices": {
+                        "opened": {
+                          "mobile": 6666,
+                          "desktop": 3000,
+                          "tablet": 333
+                        },
+                        "clicked": {
+                          "mobile": 433,
+                          "desktop": 200,
+                          "tablet": 33
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-404"
+          },
+          "408": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-408"
+          },
+          "422": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-422"
+          },
+          "429": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-429"
+          }
+        },
+        "security": [
+          {
+            "X-API-KEY": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DELETE_campaigns-campaignID",
+        "summary": "Delete campaign",
+        "tags": ["Campaigns"],
+        "description": "**Curl example:**\n```php\ncurl -X DELETE \"https://api.omnisend.com/v3/campaigns/59099010597ed74f6635fb14\" \n```\n\n**Note**: only `sent` and `draft` campaigns cant be deleted.",
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-404"
+          },
+          "408": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-408"
+          },
+          "422": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-422"
+          },
+          "429": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-429"
+          }
+        },
+        "security": [
+          {
+            "X-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/campaigns": {
+      "get": {
+        "operationId": "GET_campaigns",
+        "summary": "List campaigns",
+        "tags": ["Campaigns"],
+        "parameters": [
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "See method description for available statuses.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["draft", "paused", "scheduled", "inProgress", "sent"]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "See method description for available types.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Number of results to skip. Default is 0.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to fetch. Default is 100, max 250.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 250,
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "campaigns": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/campaign-partial"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/paging-link"
+                    }
+                  }
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "campaign": [
+                        {
+                          "campaignID": "59099010597ed74f6635fb14",
+                          "name": "Welcome",
+                          "status": "sent",
+                          "type": "abTest",
+                          "fromName": "Evil store",
+                          "subject": "Hot discounts",
+                          "url": "https://example.omnisendlink.com/598746145214/0",
+                          "createdAt": "2017-06-30T10:11:47.020Z",
+                          "updatedAt": "2017-06-30T10:11:47.020Z",
+                          "startDate": "2017-05-30T10:15:26.093Z",
+                          "endDate": "2017-05-30T18:20:19.474Z",
+                          "sent": 99999,
+                          "opened": 9999,
+                          "clicked": 666,
+                          "bounced": 111,
+                          "complained": 0,
+                          "unsubscribed": 0,
+                          "allSubscribers": false,
+                          "segments": [{}]
+                        },
+                        {
+                          "campaignID": "6665656487y45d4f54d41669",
+                          "name": "Welcome",
+                          "status": "sent",
+                          "type": "standart",
+                          "fromName": "Spy shop",
+                          "subject": "New spy cameras",
+                          "url": "https://example.omnisendlink.com/6665656487y45d4f54d/0",
+                          "createdAt": "2017-06-30T10:11:47.020Z",
+                          "updatedAt": "2017-06-30T10:11:47.020Z",
+                          "startDate": "2017-06-30T10:20:26.093Z",
+                          "endDate": "2017-06-30T10:25:19.474Z",
+                          "sent": 9,
+                          "clicked": 1,
+                          "bounced": 0,
+                          "complained": 0,
+                          "opened": 9,
+                          "unsubscribed": 0,
+                          "allSubscribers": false,
+                          "segments": [
+                            {
+                              "segmentID": "5948da6c140ce5100d20f33b"
+                            }
+                          ]
+                        }
+                      ],
+                      "paging": {
+                        "previous": "",
+                        "next": "https://api.omnisend.com/v3/segments/?offset=2&limit=2",
+                        "offset": 0,
+                        "limit": 2
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-404"
+          },
+          "408": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-408"
+          },
+          "422": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-422"
+          },
+          "429": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-429"
+          }
+        },
+        "security": [
+          {
+            "X-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/campaigns/{campaignID}/contacts/{contactID}": {
+      "parameters": [
+        {
+          "name": "campaignID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "contactID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "GET_campaigns-campaignID-contacts-contactID",
+        "summary": "Get campaign's contact",
+        "tags": ["Campaigns"],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "contactID": {
+                      "type": "string"
+                    },
+                    "sent": {
+                      "type": "boolean",
+                      "description": ""
+                    },
+                    "opened": {
+                      "type": "boolean",
+                      "description": ""
+                    },
+                    "clicked": {
+                      "type": "boolean",
+                      "description": ""
+                    },
+                    "bounced": {
+                      "type": "boolean",
+                      "description": ""
+                    },
+                    "complained": {
+                      "type": "boolean",
+                      "description": ""
+                    },
+                    "unsubscribed": {
+                      "type": "boolean",
+                      "description": ""
+                    }
+                  }
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "email": "austin.powers@example.com",
+                      "contactID": "79enkpRa3GzzNRgOtvkjNvYbxwf",
+                      "sent": true,
+                      "opened": false,
+                      "clicked": true,
+                      "bounced": false,
+                      "comlained": false,
+                      "unsubscribed": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-404"
+          },
+          "408": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-408"
+          },
+          "422": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-422"
+          },
+          "429": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-429"
+          }
+        },
+        "security": [
+          {
+            "X-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/campaigns/{campaignID}/contacts": {
+      "parameters": [
+        {
+          "name": "campaignID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "GET_campaigns-campaignID-contacts",
+        "summary": "List campaign contacts",
+        "tags": ["Campaigns"],
+        "description": "There is ability to get campaign contacts which `opened` email, `clicked` on links in email, `unsubsribed`, `complained` or `bounced`.\n\nJust pass query parameter with value **true**.\n\n**Example**:\n\nhttps://api.omnisend.com/v3/campaigns/59099010597ed74f6635fb14/contacts?**clicked=true**",
+        "parameters": [
+          {
+            "name": "clicked",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "enum": [true, false]
+            }
+          },
+          {
+            "name": "opened",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "enum": [true, false]
+            }
+          },
+          {
+            "name": "unsubscribed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "enum": [true, false]
+            }
+          },
+          {
+            "name": "bounced",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "enum": [true, false]
+            }
+          },
+          {
+            "name": "complained",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "enum": [true, false]
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Number of results to skip. Default is 0.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to fetch. Default is 100, max 250.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 250,
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "contacts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "contactID": {
+                            "type": "string"
+                          },
+                          "sent": {
+                            "type": "boolean",
+                            "description": ""
+                          },
+                          "opened": {
+                            "type": "boolean",
+                            "description": ""
+                          },
+                          "clicked": {
+                            "type": "boolean",
+                            "description": ""
+                          },
+                          "bounced": {
+                            "type": "boolean",
+                            "description": ""
+                          },
+                          "complained": {
+                            "type": "boolean",
+                            "description": ""
+                          },
+                          "unsubscribed": {
+                            "type": "boolean",
+                            "description": ""
+                          }
+                        }
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/paging-link"
+                    }
+                  }
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "contacts": [
+                        {
+                          "email": "austin.powers@example.com",
+                          "contactID": "79enkpRa3GzzNRgOtvkjNvYbxwf",
+                          "sent": true,
+                          "opened": false,
+                          "clicked": true,
+                          "bounced": false,
+                          "comlained": false,
+                          "unsubscribed": false
+                        },
+                        {
+                          "email": "dr.evil@example.com",
+                          "contactID": "56565FRT1446466sd66",
+                          "sent": true,
+                          "opened": false,
+                          "clicked": false,
+                          "bounced": false,
+                          "comlained": true,
+                          "unsubscribed": true
+                        }
+                      ],
+                      "paging": {
+                        "previous": "",
+                        "next": "https://api.omnisend.com/v3/campaigns/6665656487y45d4f54d41669/contacts?offset=2&limit=2",
+                        "offset": 0,
+                        "limit": 2
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-404"
+          },
+          "408": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-408"
+          },
+          "422": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-422"
+          },
+          "429": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-429"
+          }
+        },
+        "security": [
+          {
+            "X-API-KEY": []
+          }
+        ]
+      }
+    },
+    "/campaigns/{campaignID}/actions/start": {
+      "parameters": [
+        {
+          "name": "campaignID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "POST_campaigns-campaignID-actions-start",
+        "summary": "Start sending campaign emails",
+        "tags": ["Campaigns"],
+        "description": "Start sending campaign emails - if campaign is in draft or scheduled mode.",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "campaignID": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["campaignID"]
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "campaignID": "79enkpRa3GzzNRgOtvkjNvYbxwf"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-400"
+          },
+          "401": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-401"
+          },
+          "403": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-403"
+          },
+          "404": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-404"
+          },
+          "408": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-408"
+          },
+          "422": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-422"
+          },
+          "429": {
+            "$ref": "#/components/responses/trait-errorStatusCodes-429"
+          }
+        },
+        "security": [
+          {
+            "X-API-KEY": []
+          }
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.omnisend.com/v3"
+    }
+  ],
+  "components": {
+    "parameters": {
+      "trait_paging_offset": {
+        "name": "offset",
+        "in": "query",
+        "description": "Number of results to skip. Default is 0.",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "trait_paging_limit": {
+        "name": "limit",
+        "in": "query",
+        "description": "Number of results to fetch. Default is 100, max 250.",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 250,
+          "default": 100
+        }
+      }
+    },
+    "responses": {
+      "trait-errorStatusCodes-400": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "default": "Bad Request - invalid parameters, fields or filters"
+                }
+              }
+            }
+          }
+        }
+      },
+      "trait-errorStatusCodes-401": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "default": "Unauthorized - authorization error (invalid basic auth data or API key)"
+                }
+              }
+            }
+          }
+        }
+      },
+      "trait-errorStatusCodes-403": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "default": "Forbidden – The server understood the request, but is refusing it (blocked due to many errors in particular time) or the access is not allowed."
+                }
+              }
+            }
+          }
+        }
+      },
+      "trait-errorStatusCodes-404": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "default": " Not found – There is no resource behind the URI."
+                }
+              }
+            }
+          }
+        }
+      },
+      "trait-errorStatusCodes-408": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "default": "Request timeout"
+                }
+              }
+            }
+          }
+        }
+      },
+      "trait-errorStatusCodes-422": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "default": "Unprocessable Entity – used if the server cannot process the enitity, e.g. mandatory fields are missing in the payload.",
+                  "description": ""
+                }
+              }
+            }
+          }
+        }
+      },
+      "trait-errorStatusCodes-429": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "default": " to many requests (rate limit) - current "
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "X-API-KEY": {
+        "name": "X-API-KEY",
+        "type": "apiKey",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "contacts-input": {
+        "title": "Contacts Input",
+        "type": "object",
+        "properties": {
+          "identifiers": {
+            "$ref": "#/components/schemas/identifier-input"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "description": "Tags are labels you create to organize and manage your audience. When creating a new contact we strongly advice to add source tag, i.e. \"source: shopify\"",
+            "items": {
+              "type": "string"
+            }
+          },
+          "country": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "ISO Country code. You can find all country codes in Guides part.",
+            "minLength": 2,
+            "maxLength": 2
+          },
+          "state": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street, house number, apartment"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Contact's postal or zip code."
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["m", "f"],
+            "minLength": 1,
+            "maxLength": 1,
+            "description": "m - male, f- female"
+          },
+          "birthdate": {
+            "type": "string",
+            "format": "date",
+            "description": "Format: YYYY-MM-DD. Example: 1981-11-05"
+          },
+          "customProperties": {
+            "type": "object",
+            "description": "You can add your own custom properties. Read more in https://api-docs.omnisend.com/reference/contacts#custom-properties",
+            "properties": {
+              "name1": {
+                "type": "string"
+              },
+              "name2": {
+                "type": "number"
+              },
+              "name3": {
+                "type": "integer"
+              },
+              "name4": {
+                "type": "boolean"
+              },
+              "name5": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": ["identifiers"],
+        "example": {
+          "status": "ut sed consequat in",
+          "statusDate": "3179-01-31T22:48:45.912Z",
+          "sendWelcomeEmail": false,
+          "customFields": {
+            "key1": "laboris eiusmod",
+            "key2": "elit velit irure aute"
+          },
+          "country": "amet dolor dolore magna",
+          "lastName": "eu proident est elit",
+          "postCode": "voluptate sed consectetur laborum anim",
+          "gender": "m",
+          "address": "adipisicing irure",
+          "countryCode": "lab"
+        }
+      },
+      "contacts-output": {
+        "title": "Contacts Output",
+        "type": "object",
+        "properties": {
+          "contactID": {
+            "type": "string"
+          },
+          "identifiers": {
+            "$ref": "#/components/schemas/identifier-output"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Contacts creation date (example: 2017-05-30T14:11:12Z)"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "consents": {
+            "type": "array",
+            "description": "Legal contact consents information",
+            "items": {
+              "$ref": "#/components/schemas/consent-model"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "description": "",
+            "items": {
+              "type": "string"
+            }
+          },
+          "country": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "ISO Country code (2 characters). You can find all country codes in Guides part.",
+            "minLength": 2,
+            "maxLength": 2
+          },
+          "state": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street, house number,  apartment"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Contact's postal or zip code."
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["m", "f"],
+            "minLength": 1,
+            "maxLength": 1,
+            "description": "m - male, f- female"
+          },
+          "birthdate": {
+            "type": "string",
+            "format": "date",
+            "description": "Example: 1981-11-05"
+          },
+          "customProperties": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "name1": {
+                "type": "string"
+              },
+              "name2": {
+                "type": "number"
+              },
+              "name3": {
+                "type": "integer"
+              },
+              "name4": {
+                "type": "boolean"
+              },
+              "name5": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "id sunt minim dolore",
+          "statusDate": "3687-04-30T09:13:41.570Z",
+          "sendWelcomeEmail": true,
+          "customFields": {
+            "key1": "nulla",
+            "key2": "Lorem reprehenderit"
+          },
+          "sent": -27965585,
+          "opened": 89056999,
+          "clicked": -19897697,
+          "optInDate": "3847-12-04T12:54:35.117Z",
+          "doubleOptInDate": "3116-04-01T22:36:35.361Z",
+          "phone": "id",
+          "address": "nostrud off",
+          "email": "x55ZgsTtOIhk@ASGEoqSRF.jq",
+          "state": "aliqua sint veniam ipsum occaecat",
+          "lastName": "occaecat non commodo in",
+          "country": "dolore nisi amet",
+          "contactID": "Hiy6oqPq@aBebUorUQXRAQgbMLO.agqf"
+        }
+      },
+      "identifier-input": {
+        "title": "Identifier Input",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Email or phone value"
+            },
+            "type": {
+              "type": "string",
+              "description": "Possible values: email, phone",
+              "enum": ["email", "phone"]
+            },
+            "consent": {
+              "$ref": "#/components/schemas/consent-model"
+            },
+            "channels": {
+              "type": "object",
+              "properties": {
+                "sms": {
+                  "type": "object",
+                  "description": "Required, for type 'phone'",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "Channel status",
+                      "default": "subscribed",
+                      "enum": ["subscribed", "unsubscribed", "nonSubscribed"]
+                    },
+                    "statusDate": {
+                      "type": "string",
+                      "description": "If not provided current time will be used as default"
+                    }
+                  }
+                },
+                "email": {
+                  "type": "object",
+                  "description": "Required, for type 'email'",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "default": "subscribed",
+                      "enum": ["subscribed", "unsubscribed", "nonSubscribed"]
+                    },
+                    "statusDate": {
+                      "type": "string",
+                      "description": "If not provided current time will be used as default"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["id", "type", "channels"]
+        }
+      },
+      "identifier-output": {
+        "title": "Identifier Output",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "channels": {
+              "type": "object",
+              "required": ["email"],
+              "properties": {
+                "email": {
+                  "type": "object",
+                  "required": ["status", "statusDate"],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "Email channel status"
+                    },
+                    "statusDate": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "sms": {
+                  "type": "object",
+                  "required": ["status", "statusDate"],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "SMS channel status"
+                    },
+                    "statusDate": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["id", "type", "channels"]
+        }
+      },
+      "paging-link": {
+        "title": "Paging Link",
+        "type": "object",
+        "properties": {
+          "previous": {
+            "type": "string",
+            "description": "Link to previous page results",
+            "format": "uri"
+          },
+          "next": {
+            "type": "string",
+            "description": "Link to next page results",
+            "format": "uri"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0
+          },
+          "limit": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 250,
+            "description": "Default - 100. Max - 250."
+          }
+        }
+      },
+      "orders-full": {
+        "title": "Orders Full",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/orders"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "billingAddress": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "countryCode": {
+                    "type": "string",
+                    "description": "ISO country code",
+                    "minLength": 2,
+                    "maxLength": 2
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "stateCode": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "address2": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string",
+                    "description": "Contact's postal or zip code."
+                  }
+                }
+              },
+              "shippingAddress": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "countryCode": {
+                    "type": "string",
+                    "description": "ISO country code",
+                    "minLength": 2,
+                    "maxLength": 2
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "stateCode": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "address2": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string",
+                    "description": "Contact's postal or zip code."
+                  }
+                }
+              },
+              "products": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "productID": {
+                      "type": "string"
+                    },
+                    "sku": {
+                      "type": "string"
+                    },
+                    "variantID": {
+                      "type": "string",
+                      "description": "Product variant identificator"
+                    },
+                    "variantTitle": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "vendor": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "integer",
+                      "description": "Only whole number.",
+                      "minimum": 1
+                    },
+                    "price": {
+                      "type": "integer",
+                      "description": "Final price in cents (with discount, wit taxes, etc.), without commas, etc. For example for 1.25 USD - 125. ",
+                      "minimum": 0
+                    },
+                    "discount": {
+                      "type": "integer",
+                      "description": "Discount sum in cents."
+                    },
+                    "weight": {
+                      "type": "integer"
+                    },
+                    "imageUrl": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "Link to product image"
+                    },
+                    "productUrl": {
+                      "type": "string",
+                      "description": "Link to product page",
+                      "format": "uri"
+                    },
+                    "categoryIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["productID", "variantID", "title", "quantity", "price"]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "orders-output": {
+        "title": "Orders Output",
+        "allOf": [
+          {
+            "properties": {
+              "orderID": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "contactID": {
+                "type": "string"
+              }
+            },
+            "required": ["orderID"]
+          }
+        ],
+        "type": "object"
+      },
+      "orders": {
+        "title": "Orders partial",
+        "type": "object",
+        "properties": {
+          "orderNumber": {
+            "type": "integer"
+          },
+          "cartID": {
+            "type": "string"
+          },
+          "shippingMethod": {
+            "type": "string"
+          },
+          "trackingCode": {
+            "type": "string"
+          },
+          "courierTitle": {
+            "type": "string"
+          },
+          "courierUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "orderUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "source": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "discountCode": {
+            "type": "string"
+          },
+          "discountValue": {
+            "type": "integer"
+          },
+          "discountType": {
+            "type": "string",
+            "description": "Can be `percentage`, `fixedAmount` or `freeShippping`"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency ISO code",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "orderSum": {
+            "type": "integer",
+            "description": "In cents"
+          },
+          "subTotalSum": {
+            "type": "integer",
+            "description": "In cents"
+          },
+          "subTotalTaxIncluded": {
+            "type": "boolean",
+            "description": "Whether subTotalSum includes taxes"
+          },
+          "discountSum": {
+            "type": "integer",
+            "description": "In cents"
+          },
+          "taxSum": {
+            "type": "integer",
+            "description": "In cents"
+          },
+          "shippingSum": {
+            "type": "integer",
+            "description": "In cents"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Order creation date. [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Order update date. [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+          },
+          "canceledDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+          },
+          "cancelReason": {
+            "type": "string"
+          },
+          "paymentMethod": {
+            "type": "string"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "description": "Please view description for available statuses. You need to map your status with our statuses."
+          },
+          "fulfillmentStatus": {
+            "type": "string",
+            "description": "Please view description for available statuses. You need to map your status with our statuses."
+          },
+          "contactNote": {
+            "type": "string"
+          }
+        },
+        "required": ["currency", "orderSum", "createdAt"]
+      },
+      "campaign-full": {
+        "title": "Campaign full",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/campaign-partial"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "abTestWinner": {
+                "description": "Available for `abtest` type campaigns. 'Winner' information",
+                "type": "object",
+                "properties": {
+                  "fromName": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "sent": {
+                    "type": "integer",
+                    "description": "Sent emails count"
+                  },
+                  "clicked": {
+                    "type": "integer",
+                    "description": "Clicked links in emails count"
+                  },
+                  "bounced": {
+                    "type": "integer",
+                    "description": "Bounced emails count"
+                  },
+                  "complained": {
+                    "type": "integer",
+                    "description": "Complaints count"
+                  },
+                  "opened": {
+                    "type": "integer",
+                    "description": "Opened emails count"
+                  },
+                  "unsubscribed": {
+                    "type": "integer",
+                    "description": "Unsubscribed contacts count"
+                  }
+                }
+              },
+              "abTest": {
+                "type": "array",
+                "description": "Available for `abtest` type campaigns",
+                "items": {
+                  "type": "object",
+                  "description": "Available for `abtest` type campaigns",
+                  "properties": {
+                    "winner": {
+                      "type": "boolean",
+                      "description": ""
+                    },
+                    "fromName": {
+                      "type": "string"
+                    },
+                    "subject": {
+                      "type": "string"
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "endDate": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "sent": {
+                      "type": "integer",
+                      "description": "Sent emails count"
+                    },
+                    "clicked": {
+                      "type": "integer",
+                      "description": "Clicked links in emails count"
+                    },
+                    "bounced": {
+                      "type": "integer",
+                      "description": "Bounced emails count"
+                    },
+                    "complained": {
+                      "type": "integer",
+                      "description": "Complaints count"
+                    },
+                    "opened": {
+                      "type": "integer",
+                      "description": "Opened emails count"
+                    },
+                    "unsubscribed": {
+                      "type": "integer",
+                      "description": "Unsubscribed contacts count"
+                    }
+                  }
+                }
+              },
+              "byDevices": {
+                "type": "object",
+                "properties": {
+                  "opened": {
+                    "type": "object",
+                    "properties": {
+                      "mobile": {
+                        "type": "integer"
+                      },
+                      "desktop": {
+                        "type": "integer"
+                      },
+                      "tablet": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "clicked": {
+                    "type": "object",
+                    "properties": {
+                      "mobile": {
+                        "type": "integer"
+                      },
+                      "desktop": {
+                        "type": "integer"
+                      },
+                      "tablet": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "campaign-partial": {
+        "title": "Campaign partial",
+        "type": "object",
+        "properties": {
+          "campaignID": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "description": "See `campaigns` method description for available statuses."
+          },
+          "type": {
+            "type": "string",
+            "description": "See `campaigns` method description for available types."
+          },
+          "fromName": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sent": {
+            "type": "integer",
+            "description": "Sent emails count"
+          },
+          "opened": {
+            "type": "integer",
+            "description": "Opened emails count"
+          },
+          "clicked": {
+            "type": "integer",
+            "description": "Clicked links in emails count"
+          },
+          "bounced": {
+            "type": "integer",
+            "description": "Bounced emails count"
+          },
+          "complained": {
+            "type": "integer",
+            "description": "Complaints count"
+          },
+          "unsubscribed": {
+            "type": "integer",
+            "description": "Unsubscribed contacts count"
+          },
+          "allSubscribers": {
+            "type": "boolean",
+            "description": "If true - lists and segments will be empty - campaign sent to all subscribers"
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "segmentID": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": ["campaignID", "status", "type"],
+        "example": {
+          "campaignID": "proident qui irure",
+          "status": "et Excepteur adipisicing esse",
+          "type": "ad tempor dolore",
+          "fromName": "aute reprehenderit eiusmod magna consequat",
+          "subject": "sed nostrud",
+          "creationDate": "3743-04-26T13:48:47.020Z",
+          "startDate": "4907-07-17T09:51:26.093Z",
+          "endDate": "3524-01-05T23:55:19.474Z",
+          "sent": -13858398,
+          "clicked": -44343952,
+          "bounced": -69456907,
+          "comlained": -23298758,
+          "opened": 40832034,
+          "unsubscribed": -22007960,
+          "segments": [
+            {},
+            {
+              "segmentID": "sunt ut labore"
+            },
+            {
+              "segmentID": "sunt ad dolor"
+            },
+            {}
+          ]
+        }
+      },
+      "cart-model": {
+        "title": "Cart model",
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "ISO currency code"
+          },
+          "cartSum": {
+            "type": "integer",
+            "description": "In cents, without commas, etc. For example for 1.25 USD - 125"
+          },
+          "cartRecoveryUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "cartProductID": {
+                  "type": "string",
+                  "description": "Product identificator in cart"
+                },
+                "productID": {
+                  "type": "string"
+                },
+                "variantID": {
+                  "type": "string",
+                  "description": "Product modification identificator"
+                },
+                "sku": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "description": "Only whole number.",
+                  "minimum": 1
+                },
+                "price": {
+                  "type": "integer",
+                  "description": "Final price in cents (with discount, with taxes, etc.), without commas, etc. For example for 1.25 USD - 125. ",
+                  "minimum": 0
+                },
+                "oldPrice": {
+                  "type": "integer",
+                  "description": "old product price in cents (with discount, with taxes, etc.), without commas, etc. For example for 1.50 USD - 150. ",
+                  "minimum": 0
+                },
+                "discount": {
+                  "type": "integer",
+                  "description": "Discount sum in cents."
+                },
+                "imageUrl": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Link to product image"
+                },
+                "productUrl": {
+                  "type": "string",
+                  "description": "Link to product page",
+                  "format": "uri"
+                }
+              },
+              "required": [
+                "cartProductID",
+                "productID",
+                "variantID",
+                "title",
+                "quantity",
+                "price"
+              ]
+            }
+          }
+        },
+        "required": ["currency", "cartSum"]
+      },
+      "consent-model": {
+        "type": "object",
+        "description": "Legal contact consent information",
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Value of source where user provided consent"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "description": "Date of when consent was provided"
+          },
+          "ip": {
+            "type": "string",
+            "description": "IP address of user"
+          },
+          "userAgent": {
+            "type": "string",
+            "description": "User agent of user"
+          }
+        }
+      },
+      "cart-model-full": {
+        "title": "Cart model - full",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "cartID": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "contactID": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+              }
+            },
+            "required": ["cartID"]
+          },
+          {
+            "$ref": "#/components/schemas/cart-model"
+          }
+        ]
+      },
+      "return-id": {
+        "title": "Return ID - input",
+        "type": "object",
+        "properties": {
+          "returnID": {
+            "type": "boolean",
+            "default": false,
+            "description": "Make operation synchronous and get back contactID"
+          }
+        }
+      },
+      "category-partial": {
+        "title": "Category partial",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation date. [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Update date. [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+          }
+        },
+        "required": ["title"]
+      },
+      "category-output": {
+        "title": "Category output",
+        "type": "object",
+        "properties": {
+          "categoryID": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation date. [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Update date. [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)"
+          }
+        }
+      },
+      "paging-cursor": {
+        "title": "Paging cursor",
+        "type": "object",
+        "properties": {
+          "previous": {
+            "type": "string",
+            "description": "Link to previous page results",
+            "format": "uri"
+          },
+          "next": {
+            "type": "string",
+            "description": "Link to next page results",
+            "format": "uri"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 250,
+            "description": "Default - 100. Max - 250."
+          }
+        }
+      },
+      "segments-output": {
+        "title": "Segments output",
+        "type": "object",
+        "properties": {
+          "segmentID": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "memberCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": ["segmentID", "name", "memberCount", "creationDate"],
+        "example": {
+          "segmentID": "pariatur cupi",
+          "name": "Duis",
+          "description": "cillum pariatur voluptate sit",
+          "memberCount": 88846055,
+          "creationDate": "2008-02-19"
+        }
+      }
+    }
+  },
+  "x-readme": {
+    "explorer-enabled": true,
+    "proxy-enabled": true,
+    "samples-enabled": true
+  },
+  "_id": "635bb5bf654eb600ab4872ca"
+}
