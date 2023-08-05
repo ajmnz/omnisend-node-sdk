@@ -38,6 +38,8 @@ const eslint = new ESLint({ useEslintrc: true, fix: true });
     fs.rmSync(path.join(srcPath, p), { force: true, recursive: true });
   }
 
+  fs.mkdirSync(path.join(srcPath, "spec"));
+
   const modelsPath = path.join(__dirname, "../spec");
   const modelFilenames = fs.readdirSync(modelsPath);
 
@@ -72,18 +74,9 @@ const eslint = new ESLint({ useEslintrc: true, fix: true });
     const declaration = [];
     const instance = [];
 
-    fs.renameSync(
-      path.join(srcPath, "http-client.ts"),
-      path.join(srcPath, "_http-client.ts")
-    );
-    fs.renameSync(
-      path.join(srcPath, "data-contracts.ts"),
-      path.join(srcPath, "_data-contracts.ts")
-    );
-
     const model = JSON.parse(fs.readFileSync(modelPath, "utf-8"));
     const result = await generateApi({
-      output: srcPath,
+      output: path.join(srcPath, "spec"),
       spec: model,
       httpClientType: "axios",
       templates: path.join(srcPath, "templates", "modular"),
@@ -93,23 +86,14 @@ const eslint = new ESLint({ useEslintrc: true, fix: true });
       silent: true,
     });
 
-    fs.rmSync(path.join(srcPath, "http-client.ts"), {
+    fs.rmSync(path.join(srcPath, "spec", "http-client.ts"), {
       recursive: true,
       force: true,
     });
-    fs.rmSync(path.join(srcPath, "data-contracts.ts"), {
+    fs.rmSync(path.join(srcPath, "spec", "data-contracts.ts"), {
       recursive: true,
       force: true,
     });
-
-    fs.renameSync(
-      path.join(srcPath, "_http-client.ts"),
-      path.join(srcPath, "http-client.ts")
-    );
-    fs.renameSync(
-      path.join(srcPath, "_data-contracts.ts"),
-      path.join(srcPath, "data-contracts.ts")
-    );
 
     const typesFiles = result.files.filter(
       ({ fileName }) => !["data-contracts", "http-client"].includes(fileName)
@@ -128,21 +112,25 @@ const eslint = new ESLint({ useEslintrc: true, fix: true });
         .replace(
           /HttpClient<SecurityDataType>/g,
           "HttpClient<SecurityDataType, SafeMode>"
-        );
+        )
+        .replace(/\.\/http-client/g, "../http-client")
+        .replace(/\.\/data-contracts/g, "../data-contracts");
 
       typesFile.fileName += typesFile.fileExtension;
       fs.writeFileSync(
-        path.join(srcPath, typesFile.fileName),
+        path.join(srcPath, "spec", typesFile.fileName),
         await prettierFormat(content)
       );
 
-      const lintResult = await eslint.lintFiles(path.join(srcPath, typesFile.fileName));
+      const lintResult = await eslint.lintFiles(
+        path.join(srcPath, "spec", typesFile.fileName)
+      );
       await ESLint.outputFixes(lintResult);
 
       const objectName = typesFile.fileName.replace(".ts", "");
       const importedClass = `${objectName}`.replace(/-/g, "");
 
-      imports.push(`import { ${objectName} } from "./${objectName}";`);
+      imports.push(`import { ${objectName} } from "./spec/${objectName}";`);
 
       declaration.push(`${importedClass}`);
       instance.push(`new ${importedClass}(this.httpClient)`);

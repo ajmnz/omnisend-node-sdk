@@ -1,11 +1,8 @@
-import type { CategoryOutput, CategoryPartial, PagingLink } from "./data-contracts";
-import type { HttpClient, RequestParams } from "./http-client";
-import { ContentType } from "./http-client";
+import type { OrdersFull, OrdersOutput, PagingLink } from "../data-contracts";
+import type { HttpClient, RequestParams } from "../http-client";
+import { ContentType } from "../http-client";
 
-export class Categories<
-  SecurityDataType = unknown,
-  SafeMode extends true | false = false,
-> {
+export class Orders<SecurityDataType = unknown, SafeMode extends true | false = false> {
   http: HttpClient<SecurityDataType, SafeMode>;
 
   constructor(http: HttpClient<SecurityDataType, SafeMode>) {
@@ -15,15 +12,15 @@ export class Categories<
   /**
    * No description
    *
-   * @tags Products
-   * @name GetCategoriesCategoryId
-   * @summary Get category
-   * @request GET:/categories/{categoryID}
+   * @tags Orders
+   * @name GetOrdersOrderId
+   * @summary Get order's info
+   * @request GET:/orders/{orderID}
    * @secure
    */
-  getCategoriesCategoryId = (categoryId: string, params: RequestParams = {}) =>
+  getOrdersOrderId = (orderId: string, params: RequestParams = {}) =>
     this.http.request<
-      CategoryOutput,
+      OrdersOutput & OrdersFull,
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
           error?: string;
@@ -53,29 +50,32 @@ export class Categories<
           error?: string;
         }
     >({
-      path: `/categories/${categoryId}`,
+      path: `/orders/${orderId}`,
       method: "GET",
       secure: true,
       format: "json",
       ...params,
     });
   /**
-   * @description Replace category. Pass all category info. Not passed fields will be deleted. For example if `createdAt` won't be passed, it will be overwritten with current date.
+   * @description Replace (update) existing order. All stored order data will be overwriten with request data. This method used to replace order with all its data.
    *
-   * @tags Products
-   * @name PutCategories
-   * @summary Replace category
-   * @request PUT:/categories/{categoryID}
+   * @tags Orders
+   * @name PutOrdersOrderId
+   * @summary Replace order
+   * @request PUT:/orders/{orderID}
    * @secure
    */
-  putCategories = (
-    categoryId: string,
-    data: CategoryPartial,
-    params: RequestParams = {}
-  ) =>
+  putOrdersOrderId = (orderId: string, data: OrdersFull, params: RequestParams = {}) =>
     this.http.request<
       {
-        categoryID?: string;
+        orderID: string;
+        /**
+         * email or/and phone are required
+         * @format email
+         */
+        email?: string;
+        /** email or/and phone are required */
+        phone?: string;
       },
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
@@ -106,7 +106,7 @@ export class Categories<
           error?: string;
         }
     >({
-      path: `/categories/${categoryId}`,
+      path: `/orders/${orderId}`,
       method: "PUT",
       body: data,
       secure: true,
@@ -115,15 +115,93 @@ export class Categories<
       ...params,
     });
   /**
-   * @description Delete category
+   * @description Update order status.
    *
-   * @tags Products
-   * @name DeleteCategory
-   * @summary Delete category
-   * @request DELETE:/categories/{categoryID}
+   * @tags Orders
+   * @name PatchOrdersOrderId
+   * @summary Update order status
+   * @request PATCH:/orders/{orderID}
    * @secure
    */
-  deleteCategory = (categoryId: string, params: RequestParams = {}) =>
+  patchOrdersOrderId = (
+    orderId: string,
+    data: {
+      trackingCode?: string;
+      courierTitle?: string;
+      /** @format uri */
+      courierUrl?: string;
+      /** Please view description for available statuses. You need to map your status with our statuses. */
+      paymentStatus?: string;
+      /**
+       * [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. (example: 2017-05-30T14:11:12Z)
+       * @format date-time
+       */
+      canceledDate?: string;
+      cancelReason?: string;
+      /** Please view description for available statuses. You need to map your status with our statuses. */
+      fulfillmentStatus?: string;
+      cartID?: string;
+    },
+    params: RequestParams = {}
+  ) =>
+    this.http.request<
+      {
+        orderID: string;
+        /**
+         * email or/and phone are required
+         * @format email
+         */
+        email?: string;
+        /** email or/and phone are required */
+        phone?: string;
+      },
+      | {
+          /** @default "Bad Request - invalid parameters, fields or filters" */
+          error?: string;
+        }
+      | {
+          /** @default "Unauthorized - authorization error (invalid basic auth data or API key)" */
+          error?: string;
+        }
+      | {
+          /** @default "Forbidden – The server understood the request, but is refusing it (blocked due to many errors in particular time) or the access is not allowed." */
+          error?: string;
+        }
+      | {
+          /** @default " Not found – There is no resource behind the URI." */
+          error?: string;
+        }
+      | {
+          /** @default "Request timeout" */
+          error?: string;
+        }
+      | {
+          /** @default "Unprocessable Entity – used if the server cannot process the enitity, e.g. mandatory fields are missing in the payload." */
+          error?: string;
+        }
+      | {
+          /** @default " to many requests (rate limit) - current " */
+          error?: string;
+        }
+    >({
+      path: `/orders/${orderId}`,
+      method: "PATCH",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description **Curl example:** ```php curl -X DELETE "https://api.omnisend.com/v3/orders/4686288" ```
+   *
+   * @tags Orders
+   * @name DeleteOrdersOrderId
+   * @summary Delete order
+   * @request DELETE:/orders/{orderID}
+   * @secure
+   */
+  deleteOrdersOrderId = (orderId: string, params: RequestParams = {}) =>
     this.http.request<
       void,
       | {
@@ -155,23 +233,44 @@ export class Categories<
           error?: string;
         }
     >({
-      path: `/categories/${categoryId}`,
+      path: `/orders/${orderId}`,
       method: "DELETE",
       secure: true,
       ...params,
     });
   /**
-   * @description **Sorting:** | **Parameter** | **Sort order** | **Description** | | --- | ---| --- | |title|ASC|Category title| | createdAt | DESC | Category creation date - recent first | | updatedAt | DESC | Category update date - recent first |
+   * @description **Sorting:** | **Parameter** | **Sort order** | **Description** | | --- | ---| --- | | createdAt | DESC | sort by order creation date - newest first | | updatedAt | DESC | sort by order update date - newest first | | orderSum | DESC | sort by order total sum - biggest on top |
    *
-   * @tags Products
-   * @name GetCategories
-   * @summary List categories
-   * @request GET:/categories
+   * @tags Orders
+   * @name GetOrders
+   * @summary List orders
+   * @request GET:/orders
    * @secure
    */
-  getCategories = (
+  getOrders = (
     query?: {
       sort?: string;
+      /**
+       * Email address.
+       * @format email
+       */
+      email?: string;
+      /** Phone number. */
+      phone?: string;
+      contactID?: string;
+      cartID?: string;
+      /**
+       * Update date from. Format: YYYY-MM_DD
+       * @format date-time
+       */
+      dateFrom?: string;
+      /**
+       * Update date to. Format: YYYY-MM-DD
+       * @format date-time
+       */
+      dateTo?: string;
+      paymentStatus?: string;
+      fulfillmentStatus?: string;
       /**
        * Number of results to skip. Default is 0.
        * @min 0
@@ -190,7 +289,7 @@ export class Categories<
   ) =>
     this.http.request<
       {
-        categories?: CategoryOutput[];
+        orders?: (OrdersOutput & OrdersFull)[];
         paging?: PagingLink;
       },
       | {
@@ -222,7 +321,7 @@ export class Categories<
           error?: string;
         }
     >({
-      path: `/categories`,
+      path: `/orders`,
       method: "GET",
       query,
       secure: true,
@@ -230,23 +329,39 @@ export class Categories<
       ...params,
     });
   /**
-   * @description Create new category.
+   * @description While posting new order `email` or/and `phone` or/and `contactID` must be provided.
    *
-   * @tags Products
-   * @name PostCategories
-   * @summary Create category
-   * @request POST:/categories
+   * @tags Orders
+   * @name PostOrders
+   * @summary Create new order
+   * @request POST:/orders
    * @secure
    */
-  postCategories = (
+  postOrders = (
     data: {
-      categoryID: string;
-    } & CategoryPartial,
+      orderID: string;
+      /**
+       * email or/and phone or contactID are required
+       * @format email
+       */
+      email?: string;
+      /** email or/and phone or contactID are required */
+      phone?: string;
+      /** email or/and phone or contactID are required */
+      contactID?: string;
+    } & OrdersFull,
     params: RequestParams = {}
   ) =>
     this.http.request<
       {
-        categoryID?: string;
+        orderID: string;
+        /**
+         * email or/and phone are required
+         * @format email
+         */
+        email?: string;
+        /** email or/and phone are required */
+        phone?: string;
       },
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
@@ -277,7 +392,7 @@ export class Categories<
           error?: string;
         }
     >({
-      path: `/categories`,
+      path: `/orders`,
       method: "POST",
       body: data,
       secure: true,

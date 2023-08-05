@@ -3,7 +3,7 @@
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": false,
+    "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "moduleResolution": "node",
     "isolatedModules": true,

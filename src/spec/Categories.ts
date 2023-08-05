@@ -1,8 +1,11 @@
-import type { ContactsInput, ContactsOutput, PagingCursor } from "./data-contracts";
-import type { HttpClient, RequestParams } from "./http-client";
-import { ContentType } from "./http-client";
+import type { CategoryOutput, CategoryPartial, PagingLink } from "../data-contracts";
+import type { HttpClient, RequestParams } from "../http-client";
+import { ContentType } from "../http-client";
 
-export class Contacts<SecurityDataType = unknown, SafeMode extends true | false = false> {
+export class Categories<
+  SecurityDataType = unknown,
+  SafeMode extends true | false = false,
+> {
   http: HttpClient<SecurityDataType, SafeMode>;
 
   constructor(http: HttpClient<SecurityDataType, SafeMode>) {
@@ -10,17 +13,17 @@ export class Contacts<SecurityDataType = unknown, SafeMode extends true | false 
   }
 
   /**
-   * @description `contactID` - contact's ID in our system
+   * No description
    *
-   * @tags Contacts
-   * @name GetContacts
-   * @summary Get contact's info
-   * @request GET:/contacts/{contactID}
+   * @tags Products
+   * @name GetCategoriesCategoryId
+   * @summary Get category
+   * @request GET:/categories/{categoryID}
    * @secure
    */
-  getContacts = (contactId: string, params: RequestParams = {}) =>
+  getCategoriesCategoryId = (categoryId: string, params: RequestParams = {}) =>
     this.http.request<
-      ContactsOutput,
+      CategoryOutput,
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
           error?: string;
@@ -50,32 +53,29 @@ export class Contacts<SecurityDataType = unknown, SafeMode extends true | false 
           error?: string;
         }
     >({
-      path: `/contacts/${contactId}`,
+      path: `/categories/${categoryId}`,
       method: "GET",
       secure: true,
       format: "json",
       ...params,
     });
   /**
-   * @description Update existing contact. Pass only fields you want to update. `contactID` - contact's ID in our system You can update contact: * by `contactID` in endpoint path. Example: `PATCH` [https://api.omnisend.com/v3/contacts/696969](https://api.omnisend.com/v3/contacts/696969) **Note:** - You can update any field, except `email` (`identifiers.id` value for type `email`). - `Phone` (`identifiers.id` value for type `phone`) will be added/updated **only** if it isn't assigned to another contact.
+   * @description Replace category. Pass all category info. Not passed fields will be deleted. For example if `createdAt` won't be passed, it will be overwritten with current date.
    *
-   * @tags Contacts
-   * @name PatchContactsContactId
-   * @summary Update contact
-   * @request PATCH:/contacts/{contactID}
+   * @tags Products
+   * @name PutCategories
+   * @summary Replace category
+   * @request PUT:/categories/{categoryID}
    * @secure
    */
-  patchContactsContactId = (
-    contactId: string,
-    data: object & ContactsInput,
+  putCategories = (
+    categoryId: string,
+    data: CategoryPartial,
     params: RequestParams = {}
   ) =>
     this.http.request<
       {
-        /** @format email */
-        email?: string;
-        contactID: string;
-        phone?: string;
+        categoryID?: string;
       },
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
@@ -106,8 +106,8 @@ export class Contacts<SecurityDataType = unknown, SafeMode extends true | false 
           error?: string;
         }
     >({
-      path: `/contacts/${contactId}`,
-      method: "PATCH",
+      path: `/categories/${categoryId}`,
+      method: "PUT",
       body: data,
       secure: true,
       type: ContentType.Json,
@@ -115,26 +115,69 @@ export class Contacts<SecurityDataType = unknown, SafeMode extends true | false 
       ...params,
     });
   /**
-   * No description
+   * @description Delete category
    *
-   * @tags Contacts
-   * @name ListContacts
-   * @summary List contacts
-   * @request GET:/contacts
+   * @tags Products
+   * @name DeleteCategory
+   * @summary Delete category
+   * @request DELETE:/categories/{categoryID}
    * @secure
    */
-  listContacts = (
+  deleteCategory = (categoryId: string, params: RequestParams = {}) =>
+    this.http.request<
+      void,
+      | {
+          /** @default "Bad Request - invalid parameters, fields or filters" */
+          error?: string;
+        }
+      | {
+          /** @default "Unauthorized - authorization error (invalid basic auth data or API key)" */
+          error?: string;
+        }
+      | {
+          /** @default "Forbidden – The server understood the request, but is refusing it (blocked due to many errors in particular time) or the access is not allowed." */
+          error?: string;
+        }
+      | {
+          /** @default " Not found – There is no resource behind the URI." */
+          error?: string;
+        }
+      | {
+          /** @default "Request timeout" */
+          error?: string;
+        }
+      | {
+          /** @default "Unprocessable Entity – used if the server cannot process the enitity, e.g. mandatory fields are missing in the payload." */
+          error?: string;
+        }
+      | {
+          /** @default " to many requests (rate limit) - current " */
+          error?: string;
+        }
+    >({
+      path: `/categories/${categoryId}`,
+      method: "DELETE",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description **Sorting:** | **Parameter** | **Sort order** | **Description** | | --- | ---| --- | |title|ASC|Category title| | createdAt | DESC | Category creation date - recent first | | updatedAt | DESC | Category update date - recent first |
+   *
+   * @tags Products
+   * @name GetCategories
+   * @summary List categories
+   * @request GET:/categories
+   * @secure
+   */
+  getCategories = (
     query?: {
+      sort?: string;
       /**
-       * Full email address.
-       * @format email
+       * Number of results to skip. Default is 0.
+       * @min 0
+       * @default 0
        */
-      email?: string;
-      /** Email channel status. See endpoint description for available statuses. */
-      status?: "subscribed" | "unsubscribed" | "nonSubscribed";
-      /** Segment ID. */
-      segmentID?: string;
-      tag?: string;
+      offset?: number;
       /**
        * Number of results to fetch. Default is 100, max 250.
        * @min 1
@@ -142,14 +185,13 @@ export class Contacts<SecurityDataType = unknown, SafeMode extends true | false 
        * @default 100
        */
       limit?: number;
-      phone?: string;
     },
     params: RequestParams = {}
   ) =>
     this.http.request<
       {
-        contacts?: ContactsOutput[];
-        paging?: PagingCursor;
+        categories?: CategoryOutput[];
+        paging?: PagingLink;
       },
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
@@ -180,7 +222,7 @@ export class Contacts<SecurityDataType = unknown, SafeMode extends true | false 
           error?: string;
         }
     >({
-      path: `/contacts`,
+      path: `/categories`,
       method: "GET",
       query,
       secure: true,
@@ -188,26 +230,23 @@ export class Contacts<SecurityDataType = unknown, SafeMode extends true | false 
       ...params,
     });
   /**
-   * @description Create new contact.
+   * @description Create new category.
    *
-   * @tags Contacts
-   * @name PostContacts
-   * @summary Create contact
-   * @request POST:/contacts
+   * @tags Products
+   * @name PostCategories
+   * @summary Create category
+   * @request POST:/categories
    * @secure
    */
-  postContacts = (
+  postCategories = (
     data: {
-      /** Send welcome email (will be sent only if welcome workflow is turned on) or not. */
-      sendWelcomeEmail?: boolean;
-    } & ContactsInput,
+      categoryID: string;
+    } & CategoryPartial,
     params: RequestParams = {}
   ) =>
     this.http.request<
       {
-        /** @format email */
-        email?: string;
-        contactID: string;
+        categoryID?: string;
       },
       | {
           /** @default "Bad Request - invalid parameters, fields or filters" */
@@ -238,7 +277,7 @@ export class Contacts<SecurityDataType = unknown, SafeMode extends true | false 
           error?: string;
         }
     >({
-      path: `/contacts`,
+      path: `/categories`,
       method: "POST",
       body: data,
       secure: true,

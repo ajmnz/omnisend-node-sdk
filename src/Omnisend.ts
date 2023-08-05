@@ -3,14 +3,14 @@ import { OmnisendCore } from "./OmnisendCore";
 import type { OmnisendOptions } from "./types";
 
 // Model imports
-import { Batches } from "./Batches";
-import { Campaigns } from "./Campaigns";
-import { Carts } from "./Carts";
-import { Categories } from "./Categories";
-import { Contacts } from "./Contacts";
-import { Events } from "./Events";
-import { Orders } from "./Orders";
-import { Products } from "./Products";
+import { Batches } from "./spec/Batches";
+import { Campaigns } from "./spec/Campaigns";
+import { Carts } from "./spec/Carts";
+import { Categories } from "./spec/Categories";
+import { Contacts } from "./spec/Contacts";
+import { Events } from "./spec/Events";
+import { Orders } from "./spec/Orders";
+import { Products } from "./spec/Products";
 // End model imports
 
 export class Omnisend<S extends true | false = false> extends OmnisendCore<S> {

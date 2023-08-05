@@ -1,5 +1,5 @@
-import type { CampaignFull, CampaignPartial, PagingLink } from "./data-contracts";
-import type { HttpClient, RequestParams } from "./http-client";
+import type { CampaignFull, CampaignPartial, PagingLink } from "../data-contracts";
+import type { HttpClient, RequestParams } from "../http-client";
 
 export class Campaigns<
   SecurityDataType = unknown,
