@@ -27,7 +27,7 @@
     "lint-staged": "13.2.3",
     "pinst": ">=2",
     "prettier": "3.0.0",
-    "release-it": "16.1.3",
+    "release-it": "17.10.0",
     "rimraf": "5.0.1",
     "swagger-typescript-api": "13.0.2",
     "typescript": "5.1.6"
