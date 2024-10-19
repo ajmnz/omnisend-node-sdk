@@ -5,7 +5,7 @@
   "types": "./index.d.ts",
   "author": "ajmnz <arnau@ajb.cat>",
   "license": "MIT",
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@3.8.6",
   "description": "🔹 Typesafe Omnisend API SDK for Node.js",
   "keywords": [
     "omnisend",
