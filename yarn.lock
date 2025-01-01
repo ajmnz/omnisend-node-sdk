@@ -1282,6 +1282,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cross-spawn@npm:^7.0.6":
+  version: 7.0.6
+  resolution: "cross-spawn@npm:7.0.6"
+  dependencies:
+    path-key: ^3.1.0
+    shebang-command: ^2.0.0
+    which: ^2.0.1
+  checksum: 8d306efacaf6f3f60e0224c287664093fa9185680b2d195852ba9a863f85d02dcc737094c6e512175f8ee0161f9b87c73c6826034c2422e39de7d6569cf4503b
+  languageName: node
+  linkType: hard
+
 "crypto-random-string@npm:^4.0.0":
   version: 4.0.0
   resolution: "crypto-random-string@npm:4.0.0"
@@ -1472,17 +1483,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv-cli@npm:7.2.1":
-  version: 7.2.1
-  resolution: "dotenv-cli@npm:7.2.1"
+"dotenv-cli@npm:8.0.0":
+  version: 8.0.0
+  resolution: "dotenv-cli@npm:8.0.0"
   dependencies:
-    cross-spawn: ^7.0.3
-    dotenv: ^16.0.0
+    cross-spawn: ^7.0.6
+    dotenv: ^16.3.0
     dotenv-expand: ^10.0.0
     minimist: ^1.2.6
   bin:
     dotenv: cli.js
-  checksum: 8ca27fd44ba261b974a0342ec831a714fa1cb6d6e98d4b5db8e94f111951af1fb129a64d007264b1901337c43a8ef877071f1836b6992944fd6970c16367aee0
+  checksum: 9c88aa3b9976158f6c8d02918d70c3fac3ac0712c24c85db33e51eb93eb0659f86393aee233d2dd1042780ddd500f35fae4ac38f1763bbf6ce0f3f8046bc88e6
   languageName: node
   linkType: hard
 
@@ -1493,10 +1504,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0":
-  version: 16.3.1
-  resolution: "dotenv@npm:16.3.1"
-  checksum: 15d75e7279018f4bafd0ee9706593dd14455ddb71b3bcba9c52574460b7ccaf67d5cf8b2c08a5af1a9da6db36c956a04a1192b101ee102a3e0cf8817bbcf3dfd
+"dotenv@npm:^16.3.0":
+  version: 16.4.7
+  resolution: "dotenv@npm:16.4.7"
+  checksum: c27419b5875a44addcc56cc69b7dc5b0e6587826ca85d5b355da9303c6fc317fc9989f1f18366a16378c9fdd9532d14117a1abe6029cc719cdbbef6eaef2cea4
   languageName: node
   linkType: hard
 
@@ -3842,7 +3853,7 @@ __metadata:
     "@typescript-eslint/parser": 6.2.1
     axios: 1.4.0
     copyfiles: 2.4.1
-    dotenv-cli: 7.2.1
+    dotenv-cli: 8.0.0
     eslint: 8.46.0
     eslint-import-resolver-typescript: 3.5.5
     eslint-plugin-import: 2.28.0
