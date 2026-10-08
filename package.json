@@ -2,7 +2,22 @@
   "name": "omnisend-node-sdk",
   "version": "1.0.4",
   "main": "./index.js",
+  "module": "./index.mjs",
   "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "default": "./index.js"
+    },
+    "./package.json": "./package.json",
+    "./*.js": "./*.js",
+    "./*": {
+      "types": "./*.d.ts",
+      "default": "./*.js"
+    }
+  },
   "author": "ajmnz <arnau@ajb.cat>",
   "license": "MIT",
   "packageManager": "yarn@3.6.1",
@@ -55,7 +70,7 @@
     "clean": "rimraf -rf dist",
     "release": "dotenv -- release-it",
     "build": "tsc && yarn copy:packageJson",
-    "copy:packageJson": "copyfiles package.json README.md LICENSE dist",
+    "copy:packageJson": "copyfiles index.mjs package.json README.md LICENSE dist",
     "lint": "eslint --fix src",
     "format": "prettier --write src"
   }
